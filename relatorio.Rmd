@@ -6,6 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
+library(dunn.test)
 setwd("/home/uff/Área de Trabalho/arquivos/lorena/dados_fauna")
 
 df <- read.csv("dados_fauna.txt", h=T, sep="\t")
@@ -30,9 +31,19 @@ for (col in 4:ncol(df)) {
 for (col in 4:ncol(df)) {
   boxplot(df[,col] ~ df[,"Áreas"] * df[,"Prof"] * df[,"Coleta"], main=paste(names(df)[col]), las=2, xlab="")
   print(paste(names(df)[col]))
-  print(kruskal.test(df[,col]~df[,"Áreas"]))
-  print(kruskal.test(df[,col]~df[,"Prof"]))
-  print(kruskal.test(df[,col]~df[,"Coleta"]))
+    if(kruskal.test(df[,col]~df[,"Áreas"])$p.value < 0.05) {
+      dunn.test(df[,col],df["Áreas"])
+    }
+    
+    print(kruskal.test(df[,col]~df[,"Prof"]))
+    if(kruskal.test(df[,col]~df[,"Prof"])$p.value < 0.05) {
+      dunn.test(df[,col],df["Prof"])
+    }
+    
+    print(kruskal.test(df[,col]~df[,"Coleta"]))
+    if(kruskal.test(df[,col]~df[,"Coleta"])$p.value < 0.05) {
+      dunn.test(df[,col],df["Coleta"])
+    }
   #print(wilcox.test(df[,col]~df[,"Prof"]))
   print(wilcox.test(df[,col]~df[,"Coleta"]))
   }
